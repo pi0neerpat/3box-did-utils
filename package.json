@@ -1,0 +1,13 @@
+{
+  "name": "raid-3box-scripts",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@ceramicnetwork/3id-did-resolver": "^0.4.9",
+    "@ceramicnetwork/ceramic-http-client": "^0.7.3",
+    "@stablelib/random": "^1.0.0",
+    "dids": "^0.8.0",
+    "key-did-provider-ed25519": "^0.1.2"
+  }
+}
