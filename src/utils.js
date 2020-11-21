@@ -22,9 +22,6 @@ const verifyJWS = async (jws) => {
   const did = new DID({
     resolver: { registry: { ...KeyResolver.getResolver() } },
   });
-  console.log(Object.keys(did));
-  console.log(Object.keys(did._resolver));
-  console.log(did._resolver.registry);
   await did.verifyJWS(jws); // will throw if the jws is incorrect
 };
 
