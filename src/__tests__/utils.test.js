@@ -17,14 +17,13 @@ describe("Utils", () => {
       done();
     });
   });
-
+  //
   // test("signDid", (done) => {
   //   challengeCode = randomString(32);
   //   console.log({ challengeCode });
   //   signDid(did, { challengeCode }).then((res) => {
   //     expect(res).not.toBeNull();
   //     jws = res;
-  //     console.log(jws);
   //     done();
   //   });
   // });

@@ -9,12 +9,10 @@ const createDid = async (seed) => {
   if (!seed) throw Error("No public key provided");
   const provider = new Ed25519Provider(seed);
 
-  // v0.2.0 method key-did-provider-ed25519.
-  const did = new DID({ provider });
-
   // v1.0.0 method key-did-provider-ed25519.
+  // v1.1.0 dids
   // Fails with "DID is not authenticated" after did.authenticate()
-  // const did = new DID({ provider, resolver: KeyResolver.getResolver() });
+  const did = new DID({ provider, resolver: KeyResolver.getResolver() });
 
   await did.authenticate();
   return did;

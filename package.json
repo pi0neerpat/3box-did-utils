@@ -13,8 +13,8 @@
     "@ceramicnetwork/3id-did-resolver": "^0.4.9",
     "@ceramicnetwork/ceramic-http-client": "^0.7.3",
     "@ceramicnetwork/key-did-resolver": "^0.2.0",
-    "dids": "^0.8.0",
-    "key-did-provider-ed25519": "^0.2.0"
+    "dids": "1.1.0",
+    "key-did-provider-ed25519": "1.0.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.12.7",
