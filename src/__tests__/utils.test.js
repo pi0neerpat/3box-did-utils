@@ -3,8 +3,8 @@ import { randomString, randomBytes } from "@stablelib/random";
 const { createDid, signDid, verifyJWS } = require("../utils");
 
 let did = null;
-const jws = null;
-const challengeCode = null;
+let jws = null;
+let challengeCode = null;
 
 describe("Utils", () => {
   beforeAll(() => {});
@@ -17,20 +17,23 @@ describe("Utils", () => {
       done();
     });
   });
-  //
-  // test("signDid", (done) => {
-  //   challengeCode = randomString(32);
-  //   console.log({ challengeCode });
-  //   signDid(did, { challengeCode }).then((res) => {
-  //     expect(res).not.toBeNull();
-  //     jws = res;
-  //     done();
-  //   });
-  // });
-  //
-  // test("verifyJWS", (done) => {
-  //   verifyJWS(jws).then(() => {
-  //     done();
-  //   });
-  // });
+
+  test("signDid", (done) => {
+    challengeCode = randomString(32);
+    console.log({ challengeCode });
+    signDid(did, { challengeCode }).then((res) => {
+      expect(res).not.toBeNull();
+      jws = res;
+      done();
+    });
+  });
+
+  test("verifyJWS", (done) => {
+    verifyJWS(jws).then(({ kid, payload, id }) => {
+      console.log(kid);
+      console.log(payload);
+      console.log(id);
+      done();
+    });
+  });
 });

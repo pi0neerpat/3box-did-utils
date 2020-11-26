@@ -25,12 +25,10 @@ const signDid = async (did, content) => {
 // Serverside
 const verifyJWS = async (jws) => {
   const did = new DID({
-    // provider: // Necessary for decryptJWE
-    resolver: { registry: { ...KeyResolver.getResolver() } },
+    resolver: KeyResolver.getResolver(),
   });
   const { kid, payload } = await did.verifyJWS(jws);
-  console.log(payload);
-  console.log(kid);
+  return { kid, payload, id: kid.split("#")[0] };
 };
 
 export { createDid, signDid, verifyJWS };
