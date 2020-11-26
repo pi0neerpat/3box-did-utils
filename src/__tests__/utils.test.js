@@ -19,7 +19,8 @@ describe("Utils", () => {
   });
 
   test("signDid", (done) => {
-    challengeCode = randomString(32);
+    // challengeCode = randomString(32);
+    challengeCode = "Py3AnyWL1OupvuB20tyG8MaaC3FCrwoz";
     console.log({ challengeCode });
     signDid(did, { challengeCode }).then((res) => {
       expect(res).not.toBeNull();

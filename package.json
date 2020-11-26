@@ -7,10 +7,10 @@
   "scripts": {
     "build": "babel src -d dist",
     "lint": "eslint src --fix",
-    "test": "jest --detectOpenHandles"
+    "test": "jest --detectOpenHandles --runInBand."
   },
   "dependencies": {
-    "@ceramicnetwork/3id-did-resolver": "^0.4.9",
+    "@ceramicnetwork/3id-did-resolver": "^0.5.1",
     "@ceramicnetwork/ceramic-http-client": "^0.7.3",
     "@ceramicnetwork/key-did-resolver": "^0.2.0",
     "dids": "1.1.0",
@@ -28,6 +28,7 @@
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-prettier": "^3.1.4",
     "jest": "^26.6.3",
+    "node-fetch": "^2.6.1",
     "prettier": "^2.2.0"
   }
 }
