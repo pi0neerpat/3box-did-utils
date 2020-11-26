@@ -28,6 +28,7 @@ function base64urlToJSON(s) {
 
 const verifyJWS = async (jws) => {
   const did = new DID({
+    // provider: // Necessary for decryptJWE
     resolver: { registry: { ...KeyResolver.getResolver() } },
   });
   // Method A
@@ -37,6 +38,9 @@ const verifyJWS = async (jws) => {
   const { kid } = base64urlToJSON(jws.split(".")[0]);
   const resolved = await did.resolve(kid);
   console.log(resolved);
+
+  // const decrypted = await did.decryptJWE(jws);
+  // console.log(decrypted);
 };
 
 export { createDid, signDid, verifyJWS };
