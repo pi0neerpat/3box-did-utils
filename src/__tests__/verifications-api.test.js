@@ -5,6 +5,7 @@ const { createDid, signDid, verifyJWS } = require("../utils");
 
 let did = null;
 let challengeCode = null;
+let attestation = null;
 
 const URL = "http://localhost:3000";
 const GITHUB_USERNAME = "pi0neerpat";
@@ -42,7 +43,7 @@ const DID_SEED = [
   30,
   7,
 ];
-describe("Utils", () => {
+describe("API", () => {
   beforeAll(() => {});
 
   test("createDid", (done) => {
@@ -71,6 +72,10 @@ describe("Utils", () => {
 
   test("confirm-github", async (done) => {
     const jws = await signDid(did, { challengeCode });
+
+    // Await 1s for the challengeCode to update in the db
+    await new Promise((res) => setTimeout(res, 1000));
+
     const res = await fetch(`${URL}/api/v0/confirm-github`, {
       method: "POST",
       body: JSON.stringify({
@@ -78,17 +83,19 @@ describe("Utils", () => {
       }),
     });
     const data = await res.json();
-    console.log(data);
+    expect(data.data).not.toBeUndefined();
+    ({ attestation } = data.data);
+    expect(attestation).not.toBeUndefined();
     expect(data.status).toBe("success");
+    console.log(attestation);
     done();
   });
 
-  // test("verifyJWS", (done) => {
-  //   verifyJWS(jws).then(({ kid, payload, id }) => {
-  //     console.log(kid);
-  //     console.log(payload);
-  //     console.log(id);
-  //     done();
-  //   });
-  // });
+  test("verifyCredential", (done) => {
+    verifyJWS(attestation).then(({ payload, id }) => {
+      console.log(payload);
+      console.log(id);
+      done();
+    });
+  });
 });

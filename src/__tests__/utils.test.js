@@ -1,6 +1,6 @@
 import { randomString, randomBytes } from "@stablelib/random";
 
-const { createDid, signDid, verifyJWS } = require("../utils");
+const { createDid, signDid, verifyJWS, issueGithubClaim } = require("../utils");
 
 let did = null;
 let jws = null;
@@ -34,6 +34,13 @@ describe("Utils", () => {
       console.log(kid);
       console.log(payload);
       console.log(id);
+      done();
+    });
+  });
+
+  test("issueGithubClaim", (done) => {
+    issueGithubClaim(did, "guy", "https://someurl.com").then((res) => {
+      console.log(res);
       done();
     });
   });

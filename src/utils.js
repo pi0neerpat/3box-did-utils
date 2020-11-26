@@ -4,6 +4,8 @@ import KeyResolver from "@ceramicnetwork/key-did-resolver";
 
 import { randomString, randomBytes } from "@stablelib/random";
 
+const didJWT = require("did-jwt");
+
 //  Client side
 const createDid = async (seed) => {
   if (!seed) throw Error("No public key provided");
@@ -31,4 +33,36 @@ const verifyJWS = async (jws) => {
   return { kid, payload, id: kid.split("#")[0] };
 };
 
-export { createDid, signDid, verifyJWS };
+const issueGithubClaim = async (did, username, verification_url) => {
+  const signer = didJWT.SimpleSigner("04fff936f805ee2");
+  return didJWT
+    .createJWT(
+      {
+        sub: did,
+        nbf: Math.floor(Date.now() / 1000),
+        vc: {
+          "@context": ["https://www.w3.org/2018/credentials/v1"],
+          type: ["VerifiableCredential"],
+          credentialSubject: {
+            account: {
+              type: "Github",
+              username,
+              url: verification_url,
+            },
+          },
+        },
+      },
+      {
+        issuer: "did:https:verifications.3box.io",
+        signer,
+      }
+    )
+    .then((jwt) => {
+      return jwt;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+export { createDid, signDid, verifyJWS, issueGithubClaim };
