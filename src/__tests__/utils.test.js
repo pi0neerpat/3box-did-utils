@@ -10,14 +10,16 @@ describe("Utils", () => {
     createDid().then((res) => {
       did = res;
       expect(/did:key:[a-zA-Z0-9]{48}/.test(did.id)).toBe(true);
+      console.log(did.id);
       done();
     });
   });
 
   test("signDid", (done) => {
-    signDid(did, { hello: "world" }).then((res) => {
+    signDid(did, { challengeCode: "some random challenge" }).then((res) => {
       expect(res).not.toBeNull();
       jws = res;
+      console.log(jws);
       done();
     });
   });
