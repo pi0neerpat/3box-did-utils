@@ -12,6 +12,8 @@ let challengeCode = null;
 let jwt = null;
 let serviceDid = null;
 
+// const API_ENDPOINT =
+//   "https://r27sfer037.execute-api.us-west-2.amazonaws.com/develop";
 const API_ENDPOINT = "http://localhost:3000";
 const GITHUB_USERNAME = "pi0neerpat";
 const DID_SEED = [
@@ -69,7 +71,7 @@ describe("API", () => {
     });
   });
 
-  test("request-github", async (done) => {
+  test("/api/v0/request-github", async (done) => {
     const res = await fetch(`${API_ENDPOINT}/api/v0/request-github`, {
       method: "POST",
       body: JSON.stringify({
@@ -79,11 +81,12 @@ describe("API", () => {
     });
     const data = await res.json();
     challengeCode = data.data.challengeCode;
+    console.log(`Challenge code:\n${challengeCode}`);
     expect(challengeCode).not.toBeNull();
     done();
   });
 
-  test("confirm-github", async (done) => {
+  test("/api/v0/confirm-github", async (done) => {
     const jws = await signDid(did, { challengeCode });
 
     // Await 1s for the challengeCode to update in the db
@@ -105,19 +108,15 @@ describe("API", () => {
   });
 
   test("verifyCredential", async (done) => {
-    // const decoded = didJWT.decodeJWT(jwt);
     const resolveWeb = getResolver().web;
     const mockResolver = (data) => {
       return serviceDid;
     };
-    // console.log(await resolveWeb("did:web:localhost:3000"));
     const verifiedResponse = await didJWT.verifyJWT(jwt, {
       // resolver: { resolve: resolveWeb },
       resolver: { resolve: mockResolver },
-      // audience: did,
-      // audience: "did:https:verifications.3box.io",
     });
-    console.log(verifiedResponse);
+    console.log(JSON.stringify(verifiedResponse));
     done();
   });
 });
