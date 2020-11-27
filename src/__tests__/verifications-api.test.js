@@ -1,13 +1,18 @@
+import { getResolver } from "web-did-resolver";
+
 import { randomString, randomBytes } from "@stablelib/random";
 import fetch from "node-fetch";
+
+const didJWT = require("did-jwt");
 
 const { createDid, signDid, verifyJWS } = require("../utils");
 
 let did = null;
 let challengeCode = null;
-let attestation = null;
+let jwt = null;
+let serviceDid = null;
 
-const URL = "http://localhost:3000";
+const API_ENDPOINT = "http://localhost:3000";
 const GITHUB_USERNAME = "pi0neerpat";
 const DID_SEED = [
   217,
@@ -46,18 +51,25 @@ const DID_SEED = [
 describe("API", () => {
   beforeAll(() => {});
 
+  test("getWellKnownDid", async (done) => {
+    const res = await fetch(`${API_ENDPOINT}/.well-known/did.json`);
+    serviceDid = await res.json();
+    console.log(`Service public key:\n${serviceDid.publicKey[0].publicKeyHex}`);
+    done();
+  });
+
   test("createDid", (done) => {
     // const seed = randomBytes(32);
     createDid(DID_SEED).then((res) => {
       did = res;
       expect(/did:key:[a-zA-Z0-9]{48}/.test(did.id)).toBe(true);
-      console.log(did.id);
+      console.log(`User did:\n${did.id}`);
       done();
     });
   });
 
   test("request-github", async (done) => {
-    const res = await fetch(`${URL}/api/v0/request-github`, {
+    const res = await fetch(`${API_ENDPOINT}/api/v0/request-github`, {
       method: "POST",
       body: JSON.stringify({
         username: GITHUB_USERNAME,
@@ -76,7 +88,7 @@ describe("API", () => {
     // Await 1s for the challengeCode to update in the db
     await new Promise((res) => setTimeout(res, 1000));
 
-    const res = await fetch(`${URL}/api/v0/confirm-github`, {
+    const res = await fetch(`${API_ENDPOINT}/api/v0/confirm-github`, {
       method: "POST",
       body: JSON.stringify({
         jws,
@@ -84,18 +96,27 @@ describe("API", () => {
     });
     const data = await res.json();
     expect(data.data).not.toBeUndefined();
-    ({ attestation } = data.data);
-    expect(attestation).not.toBeUndefined();
+    ({ attestation: jwt } = data.data);
+    expect(jwt).not.toBeUndefined();
     expect(data.status).toBe("success");
-    console.log(attestation);
+    console.log(`confirm-github jwt:\n${jwt}`);
     done();
   });
 
-  test("verifyCredential", (done) => {
-    verifyJWS(attestation).then(({ payload, id }) => {
-      console.log(payload);
-      console.log(id);
-      done();
+  test("verifyCredential", async (done) => {
+    // const decoded = didJWT.decodeJWT(jwt);
+    const resolveWeb = getResolver().web;
+    const mockResolver = (data) => {
+      return serviceDid;
+    };
+    // console.log(await resolveWeb("did:web:localhost:3000"));
+    const verifiedResponse = await didJWT.verifyJWT(jwt, {
+      // resolver: { resolve: resolveWeb },
+      resolver: { resolve: mockResolver },
+      // audience: did,
+      // audience: "did:https:verifications.3box.io",
     });
+    console.log(verifiedResponse);
+    done();
   });
 });

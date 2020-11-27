@@ -1,10 +1,17 @@
 import { randomString, randomBytes } from "@stablelib/random";
 
-const { createDid, signDid, verifyJWS, issueGithubClaim } = require("../utils");
+const {
+  createDid,
+  signDid,
+  verifyJWS,
+  issueGithubClaim,
+  verifyJWT,
+} = require("../utils");
 
 let did = null;
 let jws = null;
 let challengeCode = null;
+let jwt = null;
 
 describe("Utils", () => {
   beforeAll(() => {});
@@ -13,7 +20,7 @@ describe("Utils", () => {
     createDid(randomBytes(32)).then((res) => {
       did = res;
       expect(/did:key:[a-zA-Z0-9]{48}/.test(did.id)).toBe(true);
-      console.log(did.id);
+      console.log(`User did:\n${did.id}`);
       done();
     });
   });
@@ -21,7 +28,7 @@ describe("Utils", () => {
   test("signDid", (done) => {
     // challengeCode = randomString(32);
     challengeCode = "Py3AnyWL1OupvuB20tyG8MaaC3FCrwoz";
-    console.log({ challengeCode });
+    console.log(`challenge code:\n${challengeCode}`);
     signDid(did, { challengeCode }).then((res) => {
       expect(res).not.toBeNull();
       jws = res;
@@ -31,17 +38,23 @@ describe("Utils", () => {
 
   test("verifyJWS", (done) => {
     verifyJWS(jws).then(({ kid, payload, id }) => {
-      console.log(kid);
-      console.log(payload);
-      console.log(id);
+      // console.log(kid);
+      // console.log(payload);
+      // console.log(id);
       done();
     });
   });
 
   test("issueGithubClaim", (done) => {
     issueGithubClaim(did, "guy", "https://someurl.com").then((res) => {
-      console.log(res);
+      jwt = res;
+      console.log(`confirm-github jwt:\n${jwt}`);
       done();
     });
+  });
+
+  test("verifyJWT", async (done) => {
+    await verifyJWT(jwt);
+    done();
   });
 });
