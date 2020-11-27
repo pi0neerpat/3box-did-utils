@@ -12,10 +12,12 @@ let challengeCode = null;
 let jwt = null;
 let serviceDid = null;
 
+// const API_ENDPOINT =
+//   "https://r27sfer037.execute-api.us-west-2.amazonaws.com/develop";
 const API_ENDPOINT = "http://localhost:3000";
 const GITHUB_USERNAME = "pi0neerpat";
 const DID_SEED = [
-  217,
+  209,
   125,
   91,
   58,
@@ -97,6 +99,7 @@ describe("API", () => {
       }),
     });
     const data = await res.json();
+    console.log(data);
     expect(data.data).not.toBeUndefined();
     ({ attestation: jwt } = data.data);
     expect(jwt).not.toBeUndefined();
