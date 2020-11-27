@@ -48,6 +48,7 @@ const DID_SEED = [
   30,
   7,
 ];
+
 describe("API", () => {
   beforeAll(() => {});
 

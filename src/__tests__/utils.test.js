@@ -6,15 +6,48 @@ const {
   verifyJWS,
   issueGithubClaim,
   verifyJWT,
+  createRandomSecp256k1,
 } = require("../utils");
+
+const mockServiceDid = {
+  "@context": "https://w3id.org/did/v1",
+  id: "did:web:verifications.3boxlabs.com",
+  publicKey: [
+    {
+      id: "did:web:verifications.3boxlabs.com#owner",
+      type: "Secp256k1VerificationKey2018",
+      owner: "did:web:verifications.3boxlabs.com",
+      publicKeyHex: "",
+    },
+  ],
+  authentication: [
+    {
+      type: "Secp256k1SignatureAuthentication2018",
+      publicKey: "did:web:verifications.3boxlabs.com#owner",
+    },
+  ],
+};
 
 let did = null;
 let jws = null;
 let challengeCode = null;
 let jwt = null;
+let privateKey = null;
+let publicKey = null;
 
 describe("Utils", () => {
   beforeAll(() => {});
+
+  test("createRandomSecp256k1", async (done) => {
+    const keys = await createRandomSecp256k1();
+    ({ privateKey, publicKey } = keys);
+    console.log(
+      `Service public key:\n${publicKey}\nService private key:\n${privateKey}`
+    );
+    expect(publicKey).not.toBeUndefined();
+    expect(privateKey).not.toBeUndefined();
+    done();
+  });
 
   test("createDid", (done) => {
     createDid(randomBytes(32)).then((res) => {
@@ -37,24 +70,28 @@ describe("Utils", () => {
   });
 
   test("verifyJWS", (done) => {
-    verifyJWS(jws).then(({ kid, payload, id }) => {
-      // console.log(kid);
-      // console.log(payload);
-      // console.log(id);
+    verifyJWS(jws).then(({ payload, id }) => {
+      console.log(
+        `User jws:\n  payload: ${JSON.stringify(payload)}\n  did:\n${id}`
+      );
       done();
     });
   });
 
   test("issueGithubClaim", (done) => {
-    issueGithubClaim(did, "guy", "https://someurl.com").then((res) => {
-      jwt = res;
-      console.log(`confirm-github jwt:\n${jwt}`);
-      done();
-    });
+    issueGithubClaim(did, "guy", "https://someurl.com", privateKey).then(
+      (res) => {
+        jwt = res;
+        console.log(`confirm-github jwt:\n${jwt}`);
+        done();
+      }
+    );
   });
 
   test("verifyJWT", async (done) => {
-    await verifyJWT(jwt);
+    mockServiceDid.publicKey[0].publicKeyHex = publicKey;
+    const verifiedResponse = await verifyJWT(jwt, mockServiceDid);
+    console.log(verifiedResponse);
     done();
   });
 });

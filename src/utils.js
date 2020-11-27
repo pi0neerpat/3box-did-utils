@@ -3,34 +3,18 @@ import { Ed25519Provider } from "key-did-provider-ed25519";
 import KeyResolver from "@ceramicnetwork/key-did-resolver";
 import { getResolver } from "web-did-resolver";
 
+import { ec as EC } from "elliptic";
 import { randomString, randomBytes } from "@stablelib/random";
 
 const didJWT = require("did-jwt");
 
-const mockServiceDid = {
-  "@context": "https://w3id.org/did/v1",
-  id: "did:web:verifications.3boxlabs.com",
-  publicKey: [
-    {
-      id: "did:web:verifications.3boxlabs.com#owner",
-      type: "Secp256k1VerificationKey2018",
-      owner: "did:web:verifications.3boxlabs.com",
-      publicKeyHex: "abc123",
-    },
-  ],
-  authentication: [
-    {
-      type: "Secp256k1SignatureAuthentication2018",
-      publicKey: "did:web:verifications.3boxlabs.com#owner",
-    },
-  ],
-};
+const ec = new EC("secp256k1");
 
 /// ///////////////////
 // Client-side
 /// ///////////////////
 export const createDid = async (seed) => {
-  if (!seed) throw Error("No public key provided");
+  if (!seed) throw Error("No seed provided");
   const provider = new Ed25519Provider(seed);
 
   // v1.0.0 method key-did-provider-ed25519.
@@ -46,27 +30,34 @@ export const signDid = async (did, content) => {
   return did.createJWS(content);
 };
 
-export const verifyJWT = async (jwt, did) => {
+export const verifyJWT = async (jwt, serviceDid) => {
   const decoded = didJWT.decodeJWT(jwt);
   const resolveWeb = getResolver().web;
-  const mockResolver = (data) => {
-    console.log(data);
-    return mockServiceDid;
+  const mockResolver = () => {
+    return serviceDid;
   };
   // console.log(await resolveWeb("did:web:localhost:3000"));
-  const verifiedResponse = await didJWT.verifyJWT(jwt, {
+  return await didJWT.verifyJWT(jwt, {
     // resolver: { resolve: resolveWeb },
     resolver: { resolve: mockResolver },
     // audience: did,
-    // audience: "did:https:verifications.3box.io",
+    // audience: "did:web:verifications.3box.io",
   });
-  console.log(verifiedResponse);
-  done();
 };
 
 /// ///////////////////
 // Server-side
 /// ///////////////////
+export const createRandomSecp256k1 = async () => {
+  const seed = randomString(32);
+  const publicKey = ec.keyFromPrivate(seed).getPublic(true, "hex");
+  // const bytes = new Uint8Array(pubBytes.length + 2)
+  // bytes[0] = 0xe7 // secp256k1 multicodec
+  // bytes[1] = 0x01
+  // bytes.set(pubBytes, 2)
+  return { publicKey, privateKey: seed };
+};
+
 export const verifyJWS = async (jws) => {
   const did = new DID({
     resolver: KeyResolver.getResolver(),
@@ -75,8 +66,13 @@ export const verifyJWS = async (jws) => {
   return { kid, payload, id: kid.split("#")[0] };
 };
 
-export const issueGithubClaim = async (did, username, verification_url) => {
-  const signer = didJWT.SimpleSigner("04fff936f805ee2");
+export const issueGithubClaim = async (
+  did,
+  username,
+  verification_url,
+  privateKey
+) => {
+  const signer = didJWT.SimpleSigner(privateKey);
   return didJWT
     .createJWT(
       {
