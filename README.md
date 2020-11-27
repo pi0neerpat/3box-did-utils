@@ -26,7 +26,7 @@ yarn install
 ## Usage
 
 - `utils.test.js` can be run on its own, with no config needed.
-- `verifications-api.test.js` requires a local or hosted instance of [3box-verifications-v2](https://github.com/pi0neerpat/3box-verifications-v2).
+- `verifications-api.test.js` requires an instance (local or hosted) of [3box-verifications-v2](https://github.com/pi0neerpat/3box-verifications-v2).
 
 ```sh
 yarn test
