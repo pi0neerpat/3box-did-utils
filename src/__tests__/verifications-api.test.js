@@ -116,7 +116,12 @@ describe("API", () => {
       // resolver: { resolve: resolveWeb },
       resolver: { resolve: mockResolver },
     });
-    console.log(JSON.stringify(verifiedResponse));
+    console.log(
+      `credentialSubject:\n${JSON.stringify(
+        verifiedResponse.payload.vc.credentialSubject
+      )}`
+    );
+    console.log(verifiedResponse);
     done();
   });
 });
