@@ -25,8 +25,11 @@ yarn install
 
 ## Usage
 
-- `utils.test.js` can be run on its own, with no config needed.
-- `verifications-api.test.js` requires an instance (local or hosted) of [3box-verifications-v2](https://github.com/pi0neerpat/3box-verifications-v2).
+This repo is for testing a running instance (local or hosted) of [3box-verifications-v2](https://github.com/pi0neerpat/3box-verifications-v2). The primary tool is the test suite, however there are also convenient test scripts provided in `scripts/`.
+
+In order to pass all tests, you'll need to create a tweet & public gist containing the text `did:key:z6MkrhLBfwRkSedFLwQyJtyFB1ypBD557eq5k4hVvLvADREh`. Keep in mind that gists must be less than 30 minutes old, and only the 5 most recent tweets are considered.
+
+You'll also need to update `API_ENDPOINT` and the `USERNAME` to reflect your own twitter/github accounts.
 
 ```sh
 yarn test

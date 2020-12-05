@@ -87,7 +87,7 @@ describe("API", () => {
     done();
   });
 
-  test.skip("/api/v0/confirm-twitter", async (done) => {
+  test("/api/v0/confirm-twitter", async (done) => {
     const jws = await signDid(did, { challengeCode });
 
     // Await 1s for the challengeCode to update in the db
@@ -109,7 +109,7 @@ describe("API", () => {
     done();
   });
 
-  test.skip("verifyCredential", async (done) => {
+  test("verifyCredential", async (done) => {
     const resolveWeb = getResolver().web;
     const mockResolver = (data) => {
       return serviceDid;

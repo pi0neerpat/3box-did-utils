@@ -15,7 +15,7 @@ let serviceDid = null;
 // const API_ENDPOINT =
 //   "https://r27sfer037.execute-api.us-west-2.amazonaws.com/develop";
 const API_ENDPOINT = "http://localhost:3000";
-const GITHUB_USERNAME = "pi0neerpat";
+const USERNAME = "pi0neerpat";
 const DID_SEED = [
   209,
   125,
@@ -75,7 +75,7 @@ describe("API", () => {
     const res = await fetch(`${API_ENDPOINT}/api/v0/request-github`, {
       method: "POST",
       body: JSON.stringify({
-        username: GITHUB_USERNAME,
+        username: USERNAME,
         did: did.id,
       }),
     });
