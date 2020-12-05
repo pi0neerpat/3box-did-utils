@@ -12,9 +12,9 @@ let challengeCode = null;
 let jwt = null;
 let serviceDid = null;
 
-// const API_ENDPOINT =
-//   "https://r27sfer037.execute-api.us-west-2.amazonaws.com/develop";
-const API_ENDPOINT = "http://localhost:3000";
+const API_ENDPOINT =
+  "https://r27sfer037.execute-api.us-west-2.amazonaws.com/develop";
+// const API_ENDPOINT = "http://localhost:3000";
 const USERNAME = "pi0neerpat";
 const DID_SEED = [
   209,

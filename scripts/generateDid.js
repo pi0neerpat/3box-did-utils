@@ -21,14 +21,5 @@ const fn = async () => {
       `${jws.signatures[0].protected}.${jws.payload}.${jws.signatures[0].signature}`
     );
   });
-  // prompt.get(["Attestation JWT"], async (err, { jwt }) => {
-  //   const resolveWeb = getResolver().web;
-  //   const verifiedResponse = await didJWT.verifyJWT(jwt, {
-  //     resolver: { resolve: resolveWeb },
-  //     audience:
-  //       "https://r27sfer037.execute-api.us-west-2.amazonaws.com/develop/",
-  //   });
-  //   console.log("Attestation:", `${verifiedResponse}`);
-  // });
 };
 fn();

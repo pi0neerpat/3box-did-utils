@@ -25,14 +25,42 @@ yarn install
 
 ## Usage
 
-This repo is for testing a running instance (local or hosted) of [3box-verifications-v2](https://github.com/pi0neerpat/3box-verifications-v2). The primary tool is the test suite, however there are also convenient test scripts provided in `scripts/`.
+The purpose of this repo is to simulate a client which interacts with the `3box-verifications-v2` service. A savvy developer should be able to use the tools (`utils.js`) and tests here to understand how they can implement utilize service in their own application.
+
+The test suite is run against an instance (local or hosted) of [3box-verifications-v2](https://github.com/pi0neerpat/3box-verifications-v2). There are also convenient test scripts provided in `scripts/` which allow for more hands-on testing.
+
+#### Test suite
 
 In order to pass all tests, you'll need to create a tweet & public gist containing the text `did:key:z6MkrhLBfwRkSedFLwQyJtyFB1ypBD557eq5k4hVvLvADREh`. Keep in mind that gists must be less than 30 minutes old, and only the 5 most recent tweets are considered.
 
-You'll also need to update `API_ENDPOINT` and the `USERNAME` to reflect your own twitter/github accounts.
+You'll also need to update the `API_ENDPOINT`, as well `USERNAME` to reflect your own twitter/github accounts.
 
 ```sh
 yarn test
+```
+
+#### Test scripts
+
+1. Start the prompt
+
+```bash
+node scripts/generateDid
+```
+
+2. Copy the `did` eg. "did:key:z6Mkq864iaQiS6EaY2mwoYMyuqocbB7FoCxWomZnHR78Bsoz" and publish a tweet/gist containing the did.
+
+3. Use curl to query a `request` endpoint with your `did` and username. See `scripts/example-curl-commands.md` for more examples.
+
+```bash
+curl http://localhost:3000/api/v0/request-github -d '{ "did": "did:key:z6MkoTZNAdoB2AXwtiFxkgrAiKxAWARUFDqHq4VrKxk9nWqd", "username": "pi0neerpat" }'
+```
+
+4. The response will include a `challengeCode`, which you can paste into the awaiting prompt from step 1, and received a `jws`.
+
+5. Use curl to query a `verify` endpoint with your `jws`. The returned response includes the attestation.
+
+```bash
+curl http://localhost:3000/api/v0/confirm-github  -d '{ "jws": "eyJhb......h" }'
 ```
 
 ## Author
